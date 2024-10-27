@@ -66,9 +66,23 @@ compress_audio() {
 process_game() {
     # Delete unnecessary files
     rm -rf $DATADIR/*.exe $DATADIR/*.dll $DATADIR/*.png $DATADIR/.gitkeep
-    echo "Removed unecessary files"
+    echo "Removed unnecessary files..."
+    
+    # Unzip the xdelta
+    echo "Unzipping the patch file..."
+    cat "./tools/patches/darkdeity.zip."* > "./tools/patches/darkdeity.zip"
 
-    #apply_xdelta
+    # Attempt to unzip
+    if unzip "./tools/patches/darkdeity.zip"; then
+        echo "Unzip successful, removing the zip file..."
+        rm -rf "./tools/patches/darkdeity.zip"
+    else
+        echo "Unzip failed, exiting..."
+        sleep 2
+        exit 1
+    fi
+
+    apply_xdelta
     compress_audio
     sleep 3
 
