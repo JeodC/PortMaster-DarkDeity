@@ -37,24 +37,6 @@ unzip_assets() {
     fi
 }
 
-lowercase_files() {
-    find "$DATADIR" -depth | while read -r file; do
-        dir=$(dirname "$file")
-        base=$(basename "$file")
-        lower_base=$(echo "$base" | tr '[:upper:]' '[:lower:]')
-        if [ "$base" != "$lower_base" ]; then
-            mv "$file" "$dir/$lower_base"
-        fi
-    done
-
-    if [ $? -eq 0 ]; then
-        echo "All files and folders in $DATADIR have been converted to lowercase."
-    else
-        echo "Failed to convert files and folders to lowercase."
-        exit 1
-    fi
-}
-
 unzip_patch() {
     echo "Unzipping the patch file..."
     if [ -f "./tools/patches/darkdeity.zip.001" ]; then
@@ -125,15 +107,17 @@ zip_archive() {
         zip -r -0 $DATAFILE ./assets/
         echo "Zipped contents to $DATAFILE"
         rm -rf ./assets
-        mkdir -p saves
 }
 
 process_game() { 
-    # Delete the files we don't need and retrieve the splash
+    # Delete the files we don't need and retrieve the splash, move other files to saves folder
+    echo "Moving files around..."
     rm -rf $DATADIR/*.dll $DATADIR/.gitkeep $DATADIR/*.exe
+    mkdir -p saves
+    [ -d "$DATADIR/Bonds" ] && mv "$DATADIR/Bonds" ./saves/Bonds
+    [ -d "$DATADIR/Scenes" ] && mv "$DATADIR/Scenes" ./saves/Scenes
+    [ -d "$DATADIR/Stories" ] && mv "$DATADIR/Stories" ./saves/Stories
     
-    echo "Renaming files..."
-    lowercase_files
     sleep 1
     echo "Unpacking xdelta patch..."
     unzip_patch
