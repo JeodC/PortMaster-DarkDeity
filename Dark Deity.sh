@@ -55,12 +55,12 @@ fi
 # Display loading splash
 if [ -f "$GAMEDIR/patchlog.txt" ]; then
     $ESUDO ./tools/splash "splash.png" 1 
-    $ESUDO ./tools/splash "splash.png" 2000
+    $ESUDO ./tools/splash "splash.png" 4000 &
 fi
 
 # Run the game
 $GPTOKEYB "gmloader.aarch64" -c "./darkdeity.gptk" & 
-pm_platform_helper "gmloader.aarch64"
+pm_platform_helper "gmloader.aarch64" >/dev/null
 ./gmloader.aarch64 -c gmloader.json
 
 # Kill processes
